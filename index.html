@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meu Portfólio - Vinhetas em Áudio</title>
+  <style>
+    /* Seu estilo permanece igual ao anterior */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+
+    header {
+      background-color: #2563eb;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .audio-item {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .audio-item h3 {
+      margin-bottom: 0.5rem;
+      color: #2563eb;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    .youtube-link {
+      display: block;
+      text-align: center;
+      margin: 2rem 0;
+      color: #cc0000;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #eee;
+      font-size: 0.9rem;
+    }
+
+    .whatsapp-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25d366;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 50px;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Meu Portfólio - Vinhetas e Propagandas</h1>
+    <p>Venha conhecer meu trabalho com vinhetas e spots publicitários em áudio</p>
+  </header>
+
+  <main>
+    <section id="audio-list" class="audio-section">
+      <!-- Os audios serão inseridos aqui -->
+    </section>
+
+    <a href="https://www.youtube.com/seucanal " target="_blank" class="youtube-link">🔗 Acesse meu canal no YouTube</a>
+  </main>
+
+  <footer>
+    &copy; 2025 - Meu Portfólio de Vinhetas | Desenvolvido com ❤️
+  </footer>
+
+  <a href="https://wa.me/55SEUNUMERODETELEFONE " target="_blank" class="whatsapp-button">💬 Fale comigo no WhatsApp</a>
+
+  <script>
+    const folderPath = 'audios'; // Pasta onde estão seus .mp3
+    const container = document.getElementById('audio-list');
+
+    fetch(`/${folderPath}/`)
+      .then(response => {
+        if (!response.ok) throw new Error("Erro ao acessar pasta.");
+        return response.text();
+      })
+      .then(data => {
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, "text/html");
+        const links = Array.from(htmlDoc.querySelectorAll("a")).map(a => a.getAttribute("href"));
+
+        const audioFiles = links.filter(href => href.endsWith('.mp3'));
+
+        if (audioFiles.length === 0) {
+          container.innerHTML = '<p>Nenhum arquivo de áudio encontrado.</p>';
+          return;
+        }
+
+        audioFiles.forEach(file => {
+          const div = document.createElement('div');
+          div.className = 'audio-item';
+
+          const title = document.createElement('h3');
+          title.textContent = file.replace('.mp3', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+          const audio = document.createElement('audio');
+          audio.controls = true;
+
+          const source = document.createElement('source');
+          source.src = `${folderPath}/${file}`;
+          source.type = 'audio/mpeg';
+
+          audio.appendChild(source);
+          div.appendChild(title);
+          div.appendChild(audio);
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        container.innerHTML = '<p>Erro ao carregar áudios. Verifique se a pasta existe e contém arquivos MP3.</p>';
+      });
+  </script>
+
+</body>
+</html>
